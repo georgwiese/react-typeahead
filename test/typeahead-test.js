@@ -201,6 +201,39 @@ describe('Typeahead Component', function() {
       });
     });
 
+    context('custom filterOptions function', function() {
+      it('works with a custom function', function() {
+        var callCounter = 0;
+        var filterOptions = function(query, options, getSearchString) {
+          callCounter++;
+          if (callCounter === 1) {
+            assert.equal(query, '');
+            assert.deepEqual(options, BEATLES);
+            return options;
+          }
+
+          assert.equal(query, 'John');
+          var results = options.filter(function(option) {
+            return getSearchString(option) === 'George';
+          });
+
+          assert.equal(results.length, 1);
+          assert.equal(results[0] , 'George');
+
+          return results;
+        };
+
+        var component = TestUtils.renderIntoDocument(<Typeahead
+          options={ BEATLES }
+          filterOptions={ filterOptions }
+        />);
+
+        var results = simulateTextInput(component, 'John');
+        assert.equal(results.length, 1);
+        assert.equal(results[0].getDOMNode().textContent, 'George');
+      });
+    });
+
     context('customClasses', function() {
 
       before(function() {

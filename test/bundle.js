@@ -34583,6 +34583,12 @@ var Typeahead = React.createClass({displayName: "Typeahead",
       // assume the options have been passed as strings
       getSearchString: function(option) { return option },
       getDisplayString: function(option) { return option },
+      filterOptions: function(query, options, getSearchString) {
+        var optionStrings = options.map(getSearchString);
+        return fuzzy.filter(query, optionStrings).map(function(res) {
+          return options[res.index];
+        });
+      },
       onNewVisibleOptions: function(entryValue, options) {}
     };
   },
@@ -34601,10 +34607,7 @@ var Typeahead = React.createClass({displayName: "Typeahead",
   },
 
   getOptionsForValue: function(value, options) {
-    var optionStrings = options.map(this.props.getSearchString);
-    var result = fuzzy.filter(value, optionStrings).map(function(res) {
-      return options[res.index];
-    });
+    var result = this.props.filterOptions(value, options, this.props.getSearchString);
 
     if (this.props.maxVisible) {
       result = result.slice(0, this.props.maxVisible);
@@ -35143,6 +35146,39 @@ describe('Typeahead Component', function() {
         assert.equal(entryValue, 'john');
         assert.equal(visibleOptions.length, 1);
         assert.deepEqual(visibleOptions, ['John']);
+      });
+    });
+
+    context('custom filterOptions function', function() {
+      it('works with a custom function', function() {
+        var callCounter = 0;
+        var filterOptions = function(query, options, getSearchString) {
+          callCounter++;
+          if (callCounter === 1) {
+            assert.equal(query, '');
+            assert.deepEqual(options, BEATLES);
+            return options;
+          }
+
+          assert.equal(query, 'John');
+          var results = options.filter(function(option) {
+            return getSearchString(option) === 'George';
+          });
+
+          assert.equal(results.length, 1);
+          assert.equal(results[0] , 'George');
+
+          return results;
+        };
+
+        var component = TestUtils.renderIntoDocument(React.createElement(Typeahead, {
+          options: BEATLES, 
+          filterOptions: filterOptions }
+        ));
+
+        var results = simulateTextInput(component, 'John');
+        assert.equal(results.length, 1);
+        assert.equal(results[0].getDOMNode().textContent, 'George');
       });
     });
 
