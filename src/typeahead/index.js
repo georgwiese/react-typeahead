@@ -23,7 +23,8 @@ var Typeahead = React.createClass({
     onOptionSelected: React.PropTypes.func,
     onKeyDown: React.PropTypes.func,
     getSearchString: React.PropTypes.func,
-    getDisplayString: React.PropTypes.func
+    getDisplayString: React.PropTypes.func,
+    onNewVisibleOptions: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -37,7 +38,8 @@ var Typeahead = React.createClass({
       // If the following two functions are not provides,
       // assume the options have been passed as strings
       getSearchString: function(option) { return option },
-      getDisplayString: function(option) { return option }
+      getDisplayString: function(option) { return option },
+      onNewVisibleOptions: function(entryValue, options) {}
     };
   },
 
@@ -63,6 +65,9 @@ var Typeahead = React.createClass({
     if (this.props.maxVisible) {
       result = result.slice(0, this.props.maxVisible);
     }
+
+    this.props.onNewVisibleOptions(value, result);
+
     return result;
   },
 

@@ -165,6 +165,42 @@ describe('Typeahead Component', function() {
       });
     });
 
+    context('onNewVisibleOptions', function() {
+      it('calls the provided callback exactly once', function() {
+        var callCounter = 0;
+        var onNewVisibleOptions = function() {
+          callCounter++;
+        };
+
+        var component = TestUtils.renderIntoDocument(<Typeahead
+          options={ BEATLES }
+          onNewVisibleOptions={ onNewVisibleOptions }
+        />);
+
+        assert.equal(callCounter, 1);
+        var results = simulateTextInput(component, 'john');
+        assert.equal(callCounter, 2);
+      });
+
+      it('calls the provided callback with the correct parameters', function() {
+        var entryValue, visibleOptions;
+        var onNewVisibleOptions = function(_entryValue, _visibleOptions) {
+          entryValue = _entryValue;
+          visibleOptions = _visibleOptions;
+        };
+
+        var component = TestUtils.renderIntoDocument(<Typeahead
+          options={ BEATLES }
+          onNewVisibleOptions={ onNewVisibleOptions }
+        />);
+
+        var results = simulateTextInput(component, 'john');
+        assert.equal(entryValue, 'john');
+        assert.equal(visibleOptions.length, 1);
+        assert.deepEqual(visibleOptions, ['John']);
+      });
+    });
+
     context('customClasses', function() {
 
       before(function() {
