@@ -22,6 +22,7 @@ var Typeahead = React.createClass({
     placeholder: React.PropTypes.string,
     onOptionSelected: React.PropTypes.func,
     onKeyDown: React.PropTypes.func,
+    onChange: React.PropTypes.func,
     getSearchString: React.PropTypes.func,
     getDisplayString: React.PropTypes.func,
     onNewVisibleOptions: React.PropTypes.func
@@ -34,6 +35,7 @@ var Typeahead = React.createClass({
       defaultValue: "",
       placeholder: "",
       onKeyDown: function(event) { return },
+      onChange: function() {},
       onOptionSelected: function(option) { },
       // If the following two functions are not provides,
       // assume the options have been passed as strings
@@ -115,11 +117,12 @@ var Typeahead = React.createClass({
     return this.props.onOptionSelected(option, event);
   },
 
-  _onTextEntryUpdated: function() {
+  _onTextEntryUpdated: function(event) {
     var value = this.refs.entry.getDOMNode().value;
     this.setState({visible: this.getOptionsForValue(value, this.props.options),
                    selection: null,
                    entryValue: value});
+    this.props.onChange(event);
   },
 
   _onEnter: function(event) {

@@ -301,6 +301,21 @@ describe('Typeahead Component', function() {
         TestUtils.Simulate.keyDown(input, { keyCode: 87 });
       });
     });
+
+    context('onChange', function() {
+      it('should bind to onChange events on the input', function() {
+        var component = TestUtils.renderIntoDocument(<Typeahead
+          options={ BEATLES }
+          onChange={ function(e) {
+              assert.equal(e.keyCode, 87);
+            }
+          }
+        />);
+
+        var input = component.refs.entry.getDOMNode();
+        TestUtils.Simulate.keyDown(input, { keyCode: 87 });
+      });
+    });
   });
 
 
