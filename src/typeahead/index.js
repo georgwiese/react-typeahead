@@ -92,11 +92,6 @@ var Typeahead = React.createClass({
       return "";
     }
 
-    // There are no typeahead / autocomplete suggestions
-    if (!this.state.visible.length) {
-      return "";
-    }
-
     return (
       <TypeaheadSelector
         ref="sel" options={ this.state.visible }
