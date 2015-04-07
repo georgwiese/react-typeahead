@@ -239,6 +239,7 @@ describe('Typeahead Component', function() {
       before(function() {
         var customClasses = {
           input: 'topcoat-text-input',
+          resultsContainer: 'foo',
           results: 'topcoat-list__container',
           listItem: 'topcoat-list__item',
           listAnchor: 'topcoat-list__link'
@@ -257,8 +258,13 @@ describe('Typeahead Component', function() {
         assert.isTrue(input.classList.contains('topcoat-text-input'));
       });
 
+      it('adds a custom class to the results container component', function() {
+        var resultsContainer = TestUtils.findRenderedComponentWithType(this.component, TypeaheadSelector).getDOMNode();
+        assert.isTrue(resultsContainer.classList.contains('foo'));
+      });
+
       it('adds a custom class to the results component', function() {
-        var results = TestUtils.findRenderedComponentWithType(this.component, TypeaheadSelector).getDOMNode();
+        var results = TestUtils.findRenderedComponentWithType(this.component, TypeaheadSelector).getDOMNode().firstChild;
         assert.isTrue(results.classList.contains('topcoat-list__container'));
       });
 
