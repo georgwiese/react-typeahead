@@ -34,11 +34,17 @@ var TypeaheadSelector = React.createClass({
   },
 
   render: function() {
-    var classes = {
+    var resultsClasses = {
       "typeahead-selector": true
     };
-    classes[this.props.customClasses.results] = this.props.customClasses.results;
-    var classList = React.addons.classSet(classes);
+    resultsClasses[this.props.customClasses.results] = this.props.customClasses.results;
+    var resultsClassList = React.addons.classSet(resultsClasses);
+
+    var containerClasses = {
+      "typeahead-selector-container": true
+    };
+    containerClasses[this.props.customClasses.resultsContainer] = this.props.customClasses.resultsContainer;
+    var containerClassList = React.addons.classSet(containerClasses);
 
     var results = this.props.options.map(function(result, i) {
       var displayString = this.props.getDisplayString(result);
@@ -51,7 +57,14 @@ var TypeaheadSelector = React.createClass({
         </TypeaheadOption>
       );
     }, this);
-    return <ul className={classList}>{ results }</ul>;
+    return (
+      <div className={containerClassList}>
+        <ul className={resultsClassList}>
+          { results }
+        </ul>
+        { this.props.children }
+      </div>
+    );
   },
 
   setSelectionIndex: function(index) {

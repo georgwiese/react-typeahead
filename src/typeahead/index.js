@@ -81,7 +81,7 @@ var Typeahead = React.createClass({
     this._onTextEntryUpdated();
   },
 
-  _renderIncrementalSearchResults: function() {
+  _renderIncrementalSearchResults: function(bottomContent) {
     // Nothing has been entered into the textbox
     if (!this.state.entryValue) {
       return "";
@@ -102,7 +102,9 @@ var Typeahead = React.createClass({
         ref="sel" options={ this.state.visible }
         onOptionSelected={ this._onOptionSelected }
         customClasses={this.props.customClasses}
-        getDisplayString={this.props.getDisplayString} />
+        getDisplayString={this.props.getDisplayString}>
+        { bottomContent }
+      </TypeaheadSelector>
    );
   },
 
@@ -189,7 +191,7 @@ var Typeahead = React.createClass({
           placeholder={this.props.placeholder}
           className={inputClassList} defaultValue={this.state.entryValue}
           onChange={this._onTextEntryUpdated} onKeyDown={this._onKeyDown} />
-        { this._renderIncrementalSearchResults() }
+        { this._renderIncrementalSearchResults(this.props.children) }
       </div>
     );
   }
