@@ -441,7 +441,6 @@ var Typeahead = React.createClass({displayName: "Typeahead",
 
   _onOptionSelected: function(option, event) {
     var nEntry = this.refs.entry.getDOMNode();
-    nEntry.focus();
     nEntry.value = this.props.getDisplayString(option);
     var optionString = this.props.getDisplayString(option);
     this.setState({visible: this.getOptionsForValue(optionString, this.props.options),
