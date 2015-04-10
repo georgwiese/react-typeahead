@@ -439,13 +439,17 @@ var Typeahead = React.createClass({displayName: "Typeahead",
    );
   },
 
-  _onOptionSelected: function(option, event) {
+  setOption: function(option) {
     var nEntry = this.refs.entry.getDOMNode();
     nEntry.value = this.props.getDisplayString(option);
     var optionString = this.props.getDisplayString(option);
     this.setState({visible: this.getOptionsForValue(optionString, this.props.options),
                    selection: option,
                    entryValue: option});
+  },
+
+  _onOptionSelected: function(option, event) {
+    this.setOption(option);
     return this.props.onOptionSelected(option, event);
   },
 
