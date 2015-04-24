@@ -30,9 +30,11 @@
     "type": "git",
     "url": "https://github.com/fmoo/react-typeahead.git"
   },
+  "peerDependencies" : {
+    "react": "^0.13.1"
+    },
   "dependencies": {
-    "fuzzy": "^0.1.0",
-    "react": "^0.12.2"
+    "fuzzy": "^0.1.0"
   },
   "main": "src/react-typeahead.js",
   "devDependencies": {
@@ -57,5 +59,12 @@
     "transform": [
       "reactify"
     ]
-  }
+  },
+  "gitHead": "7ea00de2e58c5dda5943f7f2f03e13666ecc71f8",
+  "readme": "# react-typeahead\n\n> A typeahead/autocomplete component for React\n\nreact-typeahead is a javascript library that provides a react-based\ntypeahead, or autocomplete text entry, as well as a \"typeahead tokenizer\",\na typeahead that allows you to select multiple results.\n\n## Usage\n\nFor a typeahead input:\n\n```javascript\nvar Typeahead = require('react-typeahead').Typeahead;\nReact.render(Typeahead({\n  options: ['John', 'Paul', 'George', 'Ringo'],\n  maxVisible: 2\n}));\n```\n\nFor a tokenizer typeahead input:\n\n```javascript\nvar Tokenizer = require('react-typeahead').Tokenizer;\nReact.render(Typeahead({\n  options: ['John', 'Paul', 'George', 'Ringo'],\n  onTokenAdd: function(token) {\n    console.log('token added: ', token);\n  }\n}));\n```\n\n## Examples\n\n* [Basic Typeahead with Topcoat][1]\n* [Typeahead Tokenizer with Topcoat][2]\n* [Typeahead Tokenizer with simple styling][3]\n\n![](https://i.cloudup.com/CeLPJjWvFK.gif)\n\n[1]: http://wookiehangover.github.com/react-typeahead/examples/typeahead-topcoat.html\n[2]: http://wookiehangover.github.com/react-typeahead/examples/tokenizer-topcoat.html\n[3]: http://wookiehangover.github.com/react-typeahead/examples/TypeaheadTokenizer-simple.html\n\n## API\n\n### Typeahead(props)\n\nType: React Component\n\nBasic typeahead input and results list.\n\n#### props.options\n\nType: `Array`\nDefault: []\n\nAn array supplied to the fuzzy search.\nCan be a list of strings or a list of arbitrary objects. In the latter case, `props.getSearchString` and `props.getDisplayString` should be provided.\n\n#### props.maxVisible\n\nType: `Number`\n\nLimit the number of options rendered in the results list.\n\n#### props.customClasses\n\nType: `Object`\nAllowed Keys: `input`, `results`, `listItem`, `listAnchor`\n\nAn object containing custom class names for child elements. Useful for\nintegrating with 3rd party UI kits.\n\n#### props.placeholder\n\nType: `String`\n\nPlaceholder text for the typeahead input.\n\n#### props.onKeyDown\n\nType: `Function`\n\nEvent handler for the `keyDown` event on the typeahead input.\n\n#### props.onOptionSelected\n\nType: `Function`\n\nEvent handler triggered whenever a user picks an option\n\n#### props.getSearchString\n\nType: `Function`\n\nGiven an option, it should return a string on which fuzzy search should be applied.\nIf the function is not provided `options` is assumed to be a list of strings.\n\n#### props.getDisplayString\n\nType: `Function`\n\nGiven an option, it should return a string which should be displayed in the suggestions list.\nIf the function is not provided `options` is assumed to be a list of strings.\n\n---\n\n### Tokenizer(props)\n\nType: React Component\n\nTypeahead component that allows for multiple options to be selected.\n\n#### props.options\n\nType: `Array`\nDefault: []\n\nAn array supplied to the fuzzy search.\n\n#### props.maxVisible\n\nType: `Number`\n\nLimit the number of options rendered in the results list.\n\n#### props.customClasses\n\nType: `Object`\nAllowed Keys: `input`, `results`, `listItem`, `listAnchor`, `typeahead`\n\nAn object containing custom class names for child elements. Useful for\nintegrating with 3rd party UI kits.\n\n#### props.placeholder\n\nType: `String`\n\nPlaceholder text for the typeahead input.\n\n#### props.defaultSelected\n\nType: `Array`\n\nA set of values of tokens to be loaded on first render.\n\n#### props.onTokenRemove\n\nType: `Function`\n\nEvent handler triggered whenever a token is removed.\n\n#### props.onTokenAdd\n\nType: `Function`\n\nEvent handler triggered whenever a token is removed.\n\n\n",
+  "readmeFilename": "README.md",
+  "_id": "react-typeahead@1.0.1",
+  "_shasum": "52d588267b101ef0aa258766cfb59dbb4c00c2c0",
+  "_from": "..\\..\\Users\\Philipp\\AppData\\Local\\Temp\\npm-5996-e2b3e17c\\git-cache-9cfe600f4fbd\\7ea00de2e58c5dda5943f7f2f03e13666ecc71f8",
+  "_resolved": "git+https://github.com/georgwiese/react-typeahead.git#7ea00de2e58c5dda5943f7f2f03e13666ecc71f8"
 }
