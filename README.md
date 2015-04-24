@@ -56,7 +56,7 @@ Type: `Array`
 Default: []
 
 An array supplied to the fuzzy search.
-Can be a list of strings or a list of arbitrary objects. In the latter case, `props.getSearchString` and `props.getDisplayString` should be provided.
+Can be a list of strings or a list of arbitrary objects. In the latter case, `props.getOptionSearchString` and `props.renderOption` should be provided.
 
 #### props.maxVisible
 
@@ -90,18 +90,26 @@ Type: `Function`
 
 Event handler triggered whenever a user picks an option
 
-#### props.getSearchString
+#### props.getOptionSearchString
 
 Type: `Function`
 
 Given an option, it should return a string on which fuzzy search should be applied.
 If the function is not provided `options` is assumed to be a list of strings.
 
-#### props.getDisplayString
+#### props.renderOption
 
 Type: `Function`
 
-Given an option, it should return a string which should be displayed in the suggestions list.
+Given an option, it should return a jsx/html which should be displayed in the suggestions list.
+If the function is not provided `options` is assumed to be a list of strings.
+
+
+#### props.getValueDisplayString
+
+Type: `Function`
+
+Given an option, it should return a string should be displayed in the input as a selected value.
 If the function is not provided `options` is assumed to be a list of strings.
 
 ---
