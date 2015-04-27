@@ -78,11 +78,6 @@ var Typeahead = React.createClass({
     return result;
   },
 
-  // setEntryText: function(value) {
-  //   this.refs.entry.getDOMNode().value = value;
-  //   this._onTextEntryUpdated();
-  // },
-
   _renderIncrementalSearchResults: function(bottomContent) {
     // Nothing has been entered into the textbox
     if (!this.state.entryValue) {
@@ -175,6 +170,48 @@ var Typeahead = React.createClass({
     event.preventDefault();
   },
 
+
+  _onKeyUp: function(event) {
+    return this.props.onKeyUp(event);
+  },
+
+  componentDidMount: function() {
+    this.addCheckClickAwayListner();
+  },
+
+  componentWillUnmount: function() {
+    this.removeCheckClickAwayListner();
+  },
+
+  addCheckClickAwayListner: function() {
+    document.addEventListener('click', this._checkClickAway);
+  },
+
+  removeCheckClickAwayListner: function() {
+    document.removeEventListener('click', this._checkClickAway);            
+  },
+
+  _checkClickAway: function (e) {
+    if (e.target !== this.refs.holder.getDOMNode() && !this._isChildOf(e.target, this.refs.holder.getDOMNode())) {
+
+        this.setState({visible: [],
+                       selection: this.state.selection,
+                       entryValue: this.state.entryValue});
+
+    }
+  },
+
+
+  _isChildOf: function (child, parent) {
+    if (child.parentNode === parent) {
+      return true;
+    } else if (child.parentNode === null) {
+      return false;
+    } else {
+      return this._isChildOf(child.parentNode, parent);
+    }
+  },
+
   render: function() {
     var inputClasses = {}
     inputClasses[this.props.customClasses.input] = !!this.props.customClasses.input;
@@ -187,11 +224,12 @@ var Typeahead = React.createClass({
     var classList = React.addons.classSet(classes);
 
     return (
-      <div className={classList}>
+      <div className={classList} ref='holder'>
         <input ref="entry" type="text"
           placeholder={this.props.placeholder}
           className={inputClassList} defaultValue={this.state.entryValue}
-          onChange={this._onTextEntryUpdated} onKeyDown={this._onKeyDown} />
+          onChange={this._onTextEntryUpdated} onKeyDown={this._onKeyDown}
+          onKeyUp={this._onKeyUp} />
         { this._renderIncrementalSearchResults(this.props.children) }
       </div>
     );
