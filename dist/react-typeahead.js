@@ -359,8 +359,9 @@ var Typeahead = React.createClass({displayName: "Typeahead",
     onOptionSelected: React.PropTypes.func,
     onKeyDown: React.PropTypes.func,
     onChange: React.PropTypes.func,
-    getSearchString: React.PropTypes.func,
-    getDisplayString: React.PropTypes.func,
+    getOptionSearchString: React.PropTypes.func,
+    getValueDisplayString: React.PropTypes.func,
+    renderOption: React.PropTypes.func,
     onNewVisibleOptions: React.PropTypes.func
   },
 
@@ -375,10 +376,11 @@ var Typeahead = React.createClass({displayName: "Typeahead",
       onOptionSelected: function(option) { },
       // If the following two functions are not provides,
       // assume the options have been passed as strings
-      getSearchString: function(option) { return option },
-      getDisplayString: function(option) { return option },
-      filterOptions: function(query, options, getSearchString) {
-        var optionStrings = options.map(getSearchString);
+      getOptionSearchString: function(option) { return option },
+      getValueDisplayString: function(option) { return option },
+      renderOption: function(option) { return option },
+      filterOptions: function(query, options, getOptionSearchString) {
+        var optionStrings = options.map(getOptionSearchString);
         return fuzzy.filter(query, optionStrings).map(function(res) {
           return options[res.index];
         });
@@ -401,7 +403,7 @@ var Typeahead = React.createClass({displayName: "Typeahead",
   },
 
   getOptionsForValue: function(value, options) {
-    var result = this.props.filterOptions(value, options, this.props.getSearchString);
+    var result = this.props.filterOptions(value, options, this.props.getOptionSearchString);
 
     if (this.props.maxVisible) {
       result = result.slice(0, this.props.maxVisible);
@@ -412,10 +414,10 @@ var Typeahead = React.createClass({displayName: "Typeahead",
     return result;
   },
 
-  setEntryText: function(value) {
-    this.refs.entry.getDOMNode().value = value;
-    this._onTextEntryUpdated();
-  },
+  // setEntryText: function(value) {
+  //   this.refs.entry.getDOMNode().value = value;
+  //   this._onTextEntryUpdated();
+  // },
 
   _renderIncrementalSearchResults: function(bottomContent) {
     // Nothing has been entered into the textbox
@@ -433,19 +435,20 @@ var Typeahead = React.createClass({displayName: "Typeahead",
         ref: "sel", options:  this.state.visible, 
         onOptionSelected:  this._onOptionSelected, 
         customClasses: this.props.customClasses, 
-        getDisplayString: this.props.getDisplayString}, 
+        renderOption: this.props.renderOption, 
+        getValueDisplayString: this.props.getValueDisplayString}, 
         bottomContent 
       )
    );
   },
 
   setOption: function(option) {
+    var optionString = this.props.getValueDisplayString(option);
     var nEntry = this.refs.entry.getDOMNode();
-    nEntry.value = this.props.getDisplayString(option);
-    var optionString = this.props.getDisplayString(option);
+    nEntry.value = optionString;
     this.setState({visible: this.getOptionsForValue(optionString, this.props.options),
                    selection: option,
-                   entryValue: option});
+                   entryValue: optionString});
   },
 
   _onOptionSelected: function(option, event) {
@@ -616,7 +619,8 @@ var TypeaheadSelector = React.createClass({displayName: "TypeaheadSelector",
     customClasses: React.PropTypes.object,
     selectionIndex: React.PropTypes.number,
     onOptionSelected: React.PropTypes.func,
-    getDisplayString: React.PropTypes.func.isRequired
+    renderOption: React.PropTypes.func.isRequired,
+    getValueDisplayString: React.PropTypes.func.isRequired,
   },
 
   getDefaultProps: function() {
@@ -648,13 +652,15 @@ var TypeaheadSelector = React.createClass({displayName: "TypeaheadSelector",
     var containerClassList = React.addons.classSet(containerClasses);
 
     var results = this.props.options.map(function(result, i) {
-      var displayString = this.props.getDisplayString(result);
+    var renderOption = this.props.renderOption(result);
+    var displayString = this.props.getValueDisplayString(result);
+
       return (
         React.createElement(TypeaheadOption, {ref: displayString, key: displayString, 
           hover: this.state.selectionIndex === i, 
           customClasses: this.props.customClasses, 
           onClick: this._onClick.bind(this, result)}, 
-          displayString 
+          renderOption 
         )
       );
     }, this);

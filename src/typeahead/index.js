@@ -23,8 +23,9 @@ var Typeahead = React.createClass({
     onOptionSelected: React.PropTypes.func,
     onKeyDown: React.PropTypes.func,
     onChange: React.PropTypes.func,
-    getSearchString: React.PropTypes.func,
-    getDisplayString: React.PropTypes.func,
+    getOptionSearchString: React.PropTypes.func,
+    getValueDisplayString: React.PropTypes.func,
+    renderOption: React.PropTypes.func,
     onNewVisibleOptions: React.PropTypes.func
   },
 
@@ -39,10 +40,11 @@ var Typeahead = React.createClass({
       onOptionSelected: function(option) { },
       // If the following two functions are not provides,
       // assume the options have been passed as strings
-      getSearchString: function(option) { return option },
-      getDisplayString: function(option) { return option },
-      filterOptions: function(query, options, getSearchString) {
-        var optionStrings = options.map(getSearchString);
+      getOptionSearchString: function(option) { return option },
+      getValueDisplayString: function(option) { return option },
+      renderOption: function(option) { return option },
+      filterOptions: function(query, options, getOptionSearchString) {
+        var optionStrings = options.map(getOptionSearchString);
         return fuzzy.filter(query, optionStrings).map(function(res) {
           return options[res.index];
         });
@@ -65,7 +67,7 @@ var Typeahead = React.createClass({
   },
 
   getOptionsForValue: function(value, options) {
-    var result = this.props.filterOptions(value, options, this.props.getSearchString);
+    var result = this.props.filterOptions(value, options, this.props.getOptionSearchString);
 
     if (this.props.maxVisible) {
       result = result.slice(0, this.props.maxVisible);
@@ -74,11 +76,6 @@ var Typeahead = React.createClass({
     this.props.onNewVisibleOptions(value, result);
 
     return result;
-  },
-
-  setEntryText: function(value) {
-    this.refs.entry.getDOMNode().value = value;
-    this._onTextEntryUpdated();
   },
 
   _renderIncrementalSearchResults: function(bottomContent) {
@@ -97,19 +94,20 @@ var Typeahead = React.createClass({
         ref="sel" options={ this.state.visible }
         onOptionSelected={ this._onOptionSelected }
         customClasses={this.props.customClasses}
-        getDisplayString={this.props.getDisplayString}>
+        renderOption={this.props.renderOption}
+        getValueDisplayString={this.props.getValueDisplayString}>
         { bottomContent }
       </TypeaheadSelector>
    );
   },
 
   setOption: function(option) {
+    var optionString = this.props.getValueDisplayString(option);
     var nEntry = this.refs.entry.getDOMNode();
-    nEntry.value = this.props.getDisplayString(option);
-    var optionString = this.props.getDisplayString(option);
+    nEntry.value = optionString;
     this.setState({visible: this.getOptionsForValue(optionString, this.props.options),
                    selection: option,
-                   entryValue: option});
+                   entryValue: optionString});
   },
 
   _onOptionSelected: function(option, event) {
@@ -172,6 +170,48 @@ var Typeahead = React.createClass({
     event.preventDefault();
   },
 
+
+  _onKeyUp: function(event) {
+    return this.props.onKeyUp(event);
+  },
+
+  componentDidMount: function() {
+    this.addCheckClickAwayListner();
+  },
+
+  componentWillUnmount: function() {
+    this.removeCheckClickAwayListner();
+  },
+
+  addCheckClickAwayListner: function() {
+    document.addEventListener('click', this._checkClickAway);
+  },
+
+  removeCheckClickAwayListner: function() {
+    document.removeEventListener('click', this._checkClickAway);            
+  },
+
+  _checkClickAway: function (e) {
+    if (e.target !== this.refs.holder.getDOMNode() && !this._isChildOf(e.target, this.refs.holder.getDOMNode())) {
+
+        this.setState({visible: [],
+                       selection: this.state.selection,
+                       entryValue: this.state.entryValue});
+
+    }
+  },
+
+
+  _isChildOf: function (child, parent) {
+    if (child.parentNode === parent) {
+      return true;
+    } else if (child.parentNode === null) {
+      return false;
+    } else {
+      return this._isChildOf(child.parentNode, parent);
+    }
+  },
+
   render: function() {
     var inputClasses = {}
     inputClasses[this.props.customClasses.input] = !!this.props.customClasses.input;
@@ -184,11 +224,12 @@ var Typeahead = React.createClass({
     var classList = React.addons.classSet(classes);
 
     return (
-      <div className={classList}>
+      <div className={classList} ref='holder'>
         <input ref="entry" type="text"
           placeholder={this.props.placeholder}
           className={inputClassList} defaultValue={this.state.entryValue}
-          onChange={this._onTextEntryUpdated} onKeyDown={this._onKeyDown} />
+          onChange={this._onTextEntryUpdated} onKeyDown={this._onKeyDown}
+          onKeyUp={this._onKeyUp} />
         { this._renderIncrementalSearchResults(this.props.children) }
       </div>
     );

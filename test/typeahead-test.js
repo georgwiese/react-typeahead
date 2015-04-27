@@ -16,10 +16,10 @@ function simulateTextInput(component, value) {
 
 var BEATLES = ['John', 'Paul', 'George', 'Ringo'];
 
-var getSearchString = function(option) {
+var getOptionSearchString = function(option) {
   return option.firstName + " " + option.lastName;
 };
-var getDisplayString = function(option) {
+var renderOption = function(option) {
   return option.firstName + " (" + option.birthYear + ")";
 };
 var BEATLES_COMPLEX = [
@@ -147,8 +147,8 @@ describe('Typeahead Component', function() {
       it('renders custom options correctly', function() {
         var component = TestUtils.renderIntoDocument(<Typeahead
           options={ BEATLES_COMPLEX }
-          getDisplayString={ getDisplayString }
-          getSearchString={ getSearchString }
+          renderOption={ renderOption }
+          getOptionSearchString={ getOptionSearchString }
         />);
         var results = simulateTextInput(component, 'john');
         assert.equal(results[0].getDOMNode().textContent, 'John (1940)');
@@ -157,8 +157,8 @@ describe('Typeahead Component', function() {
       it('filters search string', function() {
         var component = TestUtils.renderIntoDocument(<Typeahead
           options={ BEATLES_COMPLEX }
-          getDisplayString={ getDisplayString }
-          getSearchString={ getSearchString }
+          renderOption={ renderOption }
+          getOptionSearchString={ getOptionSearchString }
         />);
         var results = simulateTextInput(component, 'Lennon');
         assert.equal(results[0].getDOMNode().textContent, 'John (1940)');
@@ -204,7 +204,7 @@ describe('Typeahead Component', function() {
     context('custom filterOptions function', function() {
       it('works with a custom function', function() {
         var callCounter = 0;
-        var filterOptions = function(query, options, getSearchString) {
+        var filterOptions = function(query, options, getOptionSearchString) {
           callCounter++;
           if (callCounter === 1) {
             assert.equal(query, '');
@@ -214,7 +214,7 @@ describe('Typeahead Component', function() {
 
           assert.equal(query, 'John');
           var results = options.filter(function(option) {
-            return getSearchString(option) === 'George';
+            return getOptionSearchString(option) === 'George';
           });
 
           assert.equal(results.length, 1);
